@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Retrait</title>
+<meta name="theme-color" content="#06222d">
+<meta name="color-scheme" content="dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Retrait">
+<meta name="referrer" content="no-referrer">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div class="glow" aria-hidden="true"></div>
+<header class="top">
+  <div class="top-row">
+    <h1>Retrait</h1>
+    <div class="pill">
+      <button class="pill-btn" id="refresh" aria-label="Relire Gmail">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v4.5h-4.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </div>
+  <p class="status" id="status">Chargement…</p>
+</header>
+
+<section class="hero glass">
+  <div class="hero-head">
+    <span class="big" id="n-ready">0</span>
+    <span class="hero-label" id="hero-label">colis<br>à retirer</span>
+  </div>
+  <div class="filters" role="group" aria-label="Transporteur">
+    <button data-filter="all" aria-pressed="true"><b id="n-all">0</b><span>Tous</span></button>
+    <button data-filter="mondialrelay" aria-pressed="false"><b id="n-mondialrelay">0</b><span>Mondial Relay</span></button>
+    <button data-filter="vintedgo" aria-pressed="false"><b id="n-vintedgo">0</b><span>Vinted Go</span></button>
+  </div>
+</section>
+
+<section class="week glass" id="week"></section>
+
+<div class="section-head"><h2 id="list-title">À retirer</h2><span id="list-sub"></span></div>
+<main id="list" aria-live="polite"></main>
+
+<nav class="dock" aria-label="Navigation">
+  <button data-tab="ready" aria-selected="true">
+    <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M12 2.8 3.5 7.2v9.6L12 21.2l8.5-4.4V7.2L12 2.8Zm0 2.3 5.9 3-5.9 3.1-5.9-3.1 5.9-3Zm-6.5 4.7 5.5 2.9v6.3l-5.5-2.9V9.8Zm7.5 9.2v-6.3l5.5-2.9v6.3L13 19Z" fill="currentColor"/></svg>
+    <span>À retirer</span>
+  </button>
+  <button data-tab="done" aria-selected="false">
+    <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><circle cx="12" cy="12" r="9.2" fill="none" stroke="currentColor" stroke-width="2"/><path d="m7.8 12.3 2.9 2.9 5.6-5.8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span>Récupérés</span>
+  </button>
+  <button id="add" aria-label="Ajouter un code à la main">
+    <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><circle cx="12" cy="12" r="9.2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7.8v8.4M7.8 12h8.4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+    <span>Ajouter</span>
+  </button>
+</nav>
+
+<div class="qr-view" id="qr" hidden>
+  <img id="qr-img" alt="QR code de retrait">
+  <p class="qr-code" id="qr-code"></p>
+  <p class="qr-hint">Monte la luminosité · touche pour fermer</p>
+</div>
+
+<div class="sheet-wrap" id="sheet" hidden>
+  <form class="sheet" id="add-form" autocomplete="off">
+    <h2>Ajouter un code</h2>
+    <div class="seg" role="radiogroup" aria-label="Transporteur">
+      <label><input type="radio" name="carrier" value="mondialrelay" checked><span>Mondial Relay</span></label>
+      <label><input type="radio" name="carrier" value="vintedgo"><span>Vinted Go</span></label>
+    </div>
+    <label class="field"><span>Armoire</span><input name="place" list="places" placeholder="Locker 24/7 Intermarché" required></label>
+    <datalist id="places"></datalist>
+    <label class="field"><span>Code</span><input name="code" inputmode="text" autocapitalize="characters" placeholder="482913" required></label>
+    <label class="field"><span>Date limite</span><input name="deadline" type="date"></label>
+    <div class="sheet-actions">
+      <button type="button" class="btn ghost" id="add-cancel">Annuler</button>
+      <button type="submit" class="btn primary">Ajouter</button>
+    </div>
+  </form>
+</div>
+
+<div class="sheet-wrap" id="setup" hidden>
+  <form class="sheet" id="setup-form">
+    <h2>Connexion</h2>
+    <p class="muted">Ouvre une fois le lien d'installation reçu, ou colle-le ici.</p>
+    <label class="field"><span>Lien d'installation</span><input name="link" placeholder="https://…#api=…&amp;t=…"></label>
+    <div class="sheet-actions">
+      <button type="button" class="btn ghost" id="demo">Voir la démo</button>
+      <button type="submit" class="btn primary">Connecter</button>
+    </div>
+  </form>
+</div>
+
+<div class="toast" id="toast" role="status" hidden><span id="toast-text"></span><button id="toast-action" hidden></button></div>
+
+<script src="app.js"></script>
+</body>
+</html>
